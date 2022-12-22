@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
               .apply(bodyColor: Colors.black),
           primarySwatch: Colors.blue,
         ),
-        home: const LandingPage(),
+        home: const Home(),
       );
     });
   }
