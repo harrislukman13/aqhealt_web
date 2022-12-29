@@ -41,6 +41,8 @@ dependencies:
   google_fonts: ^3.0.1
   data_table_2: ^2.3.10
   syncfusion_flutter_calendar: ^20.3.61
+  firebase_core: ^2.4.0
+  cloud_firestore: ^4.3.0
 
 dev_dependencies:
   flutter_test:

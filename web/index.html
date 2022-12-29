@@ -38,6 +38,30 @@
   </script>
   <!-- This script adds the flutter initialization JS code -->
   <script src="flutter.js" defer></script>
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-analytics.js";
+    // TODO: Add SDKs for Firebase products that you want to use
+    // https://firebase.google.com/docs/web/setup#available-libraries
+  
+    // Your web app's Firebase configuration
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    const firebaseConfig = {
+      apiKey: "AIzaSyAsAtF4R2b9slePAAlPNSkG1Xmd3I4j54Q",
+      authDomain: "aqhealth-d8be5.firebaseapp.com",
+      databaseURL: "https://aqhealth-d8be5-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "aqhealth-d8be5",
+      storageBucket: "aqhealth-d8be5.appspot.com",
+      messagingSenderId: "636292154698",
+      appId: "1:636292154698:web:43e7eed500a81832906db3",
+      measurementId: "G-SEZP2ZLX20"
+    };
+  
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+  </script>
 </head>
 <body>
   <script>
