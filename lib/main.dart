@@ -1,8 +1,12 @@
+import 'package:aqhealth_web/controllers/auth_controller.dart';
+import 'package:aqhealth_web/models/nurse.dart';
 import 'package:aqhealth_web/pages/landingpage.dart';
+import 'package:aqhealth_web/pages/nurse/Wrapper.dart';
 import 'package:aqhealth_web/pages/nurse/home.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
 void main() async {
@@ -24,15 +28,19 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Sizer(builder: (context, orientation, deviceType) {
-      return MaterialApp(
-        theme: ThemeData(
-          scaffoldBackgroundColor: Colors.blue[50],
-          textTheme: GoogleFonts.mulishTextTheme(Theme.of(context).textTheme)
-              .apply(bodyColor: Colors.black),
-          primarySwatch: Colors.blue,
-        ),
-        home: const Home(),
-      );
+      return StreamProvider<UserModel?>.value(
+          value: AuthController().user,
+          initialData: null,
+          child: MaterialApp(
+            theme: ThemeData(
+              scaffoldBackgroundColor: Colors.blue[50],
+              textTheme:
+                  GoogleFonts.mulishTextTheme(Theme.of(context).textTheme)
+                      .apply(bodyColor: Colors.black),
+              primarySwatch: Colors.blue,
+            ),
+            home: Wrapper(),
+          ));
     });
   }
 }

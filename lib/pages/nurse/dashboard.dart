@@ -1,6 +1,12 @@
+import 'dart:html';
+
+import 'package:aqhealth_web/controllers/database_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
+import 'package:aqhealth_web/models/appointment.dart';
+import 'package:intl/intl.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
@@ -10,45 +16,59 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
+  List<Meeting> collection = [];
+  MeetingDataSource? events;
+  
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: ListView(children: [
-        SizedBox(
-          height: 3.h,
-        ),
-        Padding(
-          padding: EdgeInsets.all(2.h),
-          child: SizedBox(
-            height: 70.h,
-            child: Container(
-              padding: EdgeInsets.all(2.h),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5), color: Colors.white),
-              child: SfCalendar(
-                view: CalendarView.month,
-                dataSource: MeetingDataSource(_getDataSource()),
-                monthViewSettings: const MonthViewSettings(
-                    showAgenda: true,
-                    appointmentDisplayMode:
-                        MonthAppointmentDisplayMode.appointment),
-              ),
-            ),
-          ),
-        ),
-      ]),
-    );
-  }
+    return StreamProvider<List<Appointments>>.value(
+        initialData: [],
+        value: DatabaseController.withoutUID().streamAppointment(),
+        catchError: (context, error) => [],
+        builder: (context, child) {
+          List<Appointments> appointment =
+              Provider.of<List<Appointments>>(context);
 
-  List<Meeting> _getDataSource() {
-    final List<Meeting> meetings = <Meeting>[];
-    final DateTime today = DateTime.now();
-    final DateTime startTime =
-        DateTime(today.year, today.month, today.day, 9, 0, 0);
-    final DateTime endTime = startTime.add(const Duration(hours: 2));
-    meetings.add(Meeting(
-        'Conference', startTime, endTime, const Color(0xFF0F8644), false));
-    return meetings;
+          if (appointment != null) {
+            for (var e in appointment) {
+              DateTime startTime = e.bookdate!;
+              DateTime endTime = startTime.add(const Duration(hours: 1));
+              collection.add(Meeting(e.doctorID!, startTime, endTime,
+                  const Color(0xFF0F8644), false));
+              setState(() {
+                events = MeetingDataSource(collection);
+              });
+            }
+          }
+
+          return Scaffold(
+            body: ListView(children: [
+              SizedBox(
+                height: 3.h,
+              ),
+              Padding(
+                padding: EdgeInsets.all(2.h),
+                child: SizedBox(
+                  height: 70.h,
+                  child: Container(
+                    padding: EdgeInsets.all(2.h),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        color: Colors.white),
+                    child: SfCalendar(
+                      view: CalendarView.month,
+                      dataSource: events,
+                      monthViewSettings: const MonthViewSettings(
+                          showAgenda: true,
+                          appointmentDisplayMode:
+                              MonthAppointmentDisplayMode.appointment),
+                    ),
+                  ),
+                ),
+              ),
+            ]),
+          );
+        });
   }
 }
 

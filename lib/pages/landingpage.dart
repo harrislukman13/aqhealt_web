@@ -1,3 +1,4 @@
+import 'package:aqhealth_web/controllers/auth_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:aqhealth_web/constants/color.dart';
 import 'package:sizer/sizer.dart';
@@ -12,12 +13,15 @@ class LandingPage extends StatefulWidget {
 
 class _LandingPageState extends State<LandingPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final AuthController _auth = AuthController();
 
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
   final FocusNode _emailFocus = FocusNode();
   final FocusNode _passwordFocus = FocusNode();
+
+  bool isLoading = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -108,7 +112,23 @@ class _LandingPageState extends State<LandingPage> {
                                 ),
                                 backgroundColor: primary,
                               ),
-                              onPressed: () {},
+                              onPressed: () async {
+                                setState(() {
+                                  isLoading = true;
+                                });
+
+                                if (_formKey.currentState!.validate()) {
+                                  dynamic result = await _auth.singIn(
+                                      _emailController.text.trim(),
+                                      _passwordController.text.trim());
+
+                                  if (result == null) {
+                                    setState(() {
+                                      isLoading = false;
+                                    });
+                                  }
+                                }
+                              },
                               child: Text(
                                 'Sign In',
                                 style: TextStyle(

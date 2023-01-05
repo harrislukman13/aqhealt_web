@@ -1,5 +1,6 @@
 import 'dart:collection';
 
+import 'package:aqhealth_web/controllers/auth_controller.dart';
 import 'package:aqhealth_web/pages/nurse/dashboard.dart';
 import 'package:aqhealth_web/pages/nurse/list_doctor.dart';
 import 'package:aqhealth_web/widgets/responsive.dart';
@@ -24,7 +25,7 @@ enum Menu {
 
 class _HomeState extends State<Home> {
   Menu selectedpage = Menu.dashboard;
-
+  AuthController _auth = AuthController();
   final PageController _pageController = PageController();
 
   changePage(Menu page, Map<String, dynamic> data) {
@@ -119,7 +120,9 @@ class _HomeState extends State<Home> {
               style: TextStyle(color: Colors.blue),
             ),
             leading: Icon(CupertinoIcons.power),
-            onTap: () {},
+            onTap: () async {
+              await _auth.signOut();
+            },
           ),
         ],
       ),
