@@ -46,6 +46,8 @@ dependencies:
   firebase_auth: ^4.1.4
   firebase_storage: ^11.0.6
   intl: ^0.17.0
+  ionicons: ^0.2.1
+  qr_bar_code_scanner_dialog: ^0.0.5
 
 dev_dependencies:
   flutter_test:

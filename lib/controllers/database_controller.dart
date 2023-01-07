@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:aqhealth_web/models/appointment.dart';
 import 'package:aqhealth_web/models/doctor.dart';
 import 'package:aqhealth_web/models/specialist.dart';
@@ -24,32 +26,44 @@ class DatabaseController {
         .toList());
   }
 
-
   Stream<List<Doctor>> streamDoctor() {
     return _db.collection('Doctor').snapshots().map((list) =>
         list.docs.map((doctor) => Doctor.fromFireStore(doctor)).toList());
   }
 
   Future<bool> createDoctor(
-    String specialistID,
-    String name,
-    String specialistname,
-    String description,
-    int starttime,
-    int endtime,
+    Doctor a,
   ) async {
     try {
-      await _db.collection('Doctor').doc().set({
-        'doctorname': name,
-        'description': description,
-        'specialistid': specialistID,
-        'specialistname': specialistname,
-        'starttime': starttime,
-        'endtime': endtime,
+      final String id = DateTime.now().microsecondsSinceEpoch.toString();
+      await _db.collection('Doctor').doc(id).set({
+        'id': a.id,
+        'doctorname': a.doctorName,
+        'description': a.description,
+        'specialistname': a.specialistname,
+        'specialistid': a.specialistId,
+        'starttime': a.startTime,
+        'endtime': a.endTime,
       });
       return true;
     } catch (e) {
       return false;
     }
+  }
+
+  Future<void> updateDoctor(Doctor a) async {
+    await _db.collection('Doctor').doc(a.id).update({
+      'id': a.id,
+      'doctorname': a.doctorName,
+      'description': a.description,
+      'specialistname': a.specialistname,
+      'specialistid': a.specialistId,
+      'starttime': a.startTime,
+      'endtime': a.endTime,
+    });
+  }
+
+  Future<void> deleteDoctor(String id) async {
+    await _db.collection('Doctor').doc(id).delete();
   }
 }

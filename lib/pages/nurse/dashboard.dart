@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:html';
 
 import 'package:aqhealth_web/controllers/database_controller.dart';
@@ -18,7 +19,7 @@ class Dashboard extends StatefulWidget {
 class _DashboardState extends State<Dashboard> {
   List<Meeting> collection = [];
   MeetingDataSource? events;
-  
+
   @override
   Widget build(BuildContext context) {
     return StreamProvider<List<Appointments>>.value(
@@ -28,16 +29,21 @@ class _DashboardState extends State<Dashboard> {
         builder: (context, child) {
           List<Appointments> appointment =
               Provider.of<List<Appointments>>(context);
+          log(appointment.length.toString());
 
           if (appointment != null) {
             for (var e in appointment) {
-              DateTime startTime = e.bookdate!;
+              TimeOfDay rtime = TimeOfDay(hour: e.time!, minute: 0);
+              DateTime startTime = DateTime.parse(
+                  e.bookdate!.replaceAll("-", "") +
+                      'T' +
+                      e.time!.toString() +
+                      "00");
               DateTime endTime = startTime.add(const Duration(hours: 1));
-              collection.add(Meeting(e.doctorID!, startTime, endTime,
+              collection.add(Meeting(e.patientID!, startTime, endTime,
                   const Color(0xFF0F8644), false));
-              setState(() {
-                events = MeetingDataSource(collection);
-              });
+
+              events = MeetingDataSource(collection);
             }
           }
 

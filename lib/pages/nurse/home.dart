@@ -11,7 +11,9 @@ import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 
 class Home extends StatefulWidget {
-  const Home({super.key});
+  const Home({super.key, required this.data});
+
+  final Map<dynamic, dynamic> data;
 
   @override
   State<Home> createState() => _HomeState();
@@ -46,7 +48,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: NavBar(context),
+      appBar: NavBar(context, widget.data),
       drawer: SideMenu(),
       body: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -130,12 +132,13 @@ class _HomeState extends State<Home> {
   }
 }
 
-AppBar NavBar(BuildContext context) {
+AppBar NavBar(BuildContext context, Map<dynamic, dynamic> data) {
   return AppBar(
     elevation: 3,
     backgroundColor: Colors.white,
     actions: [
       Row(
+        mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
@@ -143,7 +146,7 @@ AppBar NavBar(BuildContext context) {
             style: TextStyle(color: Colors.blue, fontSize: 3.sp),
           ),
           Text(
-            "name",
+            data['name'],
             style: TextStyle(
                 color: Colors.black,
                 fontSize: 3.sp,

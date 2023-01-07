@@ -30,7 +30,9 @@ class _WrapperState extends State<Wrapper> {
             if (snapshot.connectionState == ConnectionState.done) {
               Map data = (snapshot.data!.data() ?? {}) as Map;
               if (data['role'] == 'Nurse' || data['role'] == 'nurse') {
-                return Home();
+                return Home(
+                  data: data,
+                );
               }
             }
             return Loading();
