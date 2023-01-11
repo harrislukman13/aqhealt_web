@@ -36,8 +36,8 @@ class _NewAppointmentState extends State<NewAppointment> {
   List<DataRow> _createRows(List<Appointments> appointments) {
     return appointments
         .map((appointment) => DataRow(cells: [
-              DataCell(Text(appointment.patientID!)),
-              DataCell(Text('')),
+              DataCell(Text(appointment.patientName!)),
+              DataCell(Text(appointment.specialistName!)),
               DataCell(Text(appointment.doctorname!)),
               DataCell(Text(appointment.bookdate!)),
               DataCell(Text(appointment.time.toString() + ':00')),

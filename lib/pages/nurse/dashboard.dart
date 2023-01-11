@@ -40,7 +40,7 @@ class _DashboardState extends State<Dashboard> {
                       e.time!.toString() +
                       "00");
               DateTime endTime = startTime.add(const Duration(hours: 1));
-              collection.add(Meeting(e.patientID!, startTime, endTime,
+              collection.add(Meeting(e.doctorname!, startTime, endTime,
                   const Color(0xFF0F8644), false));
 
               events = MeetingDataSource(collection);
