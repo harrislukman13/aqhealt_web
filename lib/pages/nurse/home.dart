@@ -1,6 +1,8 @@
 import 'dart:collection';
 
 import 'package:aqhealth_web/controllers/auth_controller.dart';
+import 'package:aqhealth_web/controllers/database_controller.dart';
+import 'package:aqhealth_web/models/nurse.dart';
 import 'package:aqhealth_web/pages/nurse/dashboard.dart';
 import 'package:aqhealth_web/pages/nurse/list_doctor.dart';
 import 'package:aqhealth_web/widgets/responsive.dart';
@@ -8,6 +10,7 @@ import 'package:aqhealth_web/pages/nurse/queue.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
 class Home extends StatefulWidget {
@@ -44,9 +47,11 @@ class _HomeState extends State<Home> {
       }
     });
   }
-
+  
   @override
   Widget build(BuildContext context) {
+    final user = Provider.of<UserModel?>(context);
+    final db = DatabaseController(uid: user!.uid);
     return Scaffold(
       appBar: NavBar(context, widget.data),
       drawer: SideMenu(),
@@ -61,8 +66,8 @@ class _HomeState extends State<Home> {
                 physics: const NeverScrollableScrollPhysics(),
                 children: [
                   Dashboard(),
-                  ListDoctor(),
-                  ManageQueue(),
+                  ListDoctor(db: db,),
+                  ManageQueue(uid: user,),
                 ],
               ))
         ],

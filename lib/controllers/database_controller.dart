@@ -1,9 +1,12 @@
 import 'dart:developer';
+import 'dart:js_util';
 
 import 'package:aqhealth_web/models/appointment.dart';
 import 'package:aqhealth_web/models/doctor.dart';
+import 'package:aqhealth_web/models/queue.dart';
 import 'package:aqhealth_web/models/specialist.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_database/firebase_database.dart';
 
 class DatabaseController {
   final String uid;
@@ -13,6 +16,8 @@ class DatabaseController {
   final CollectionReference userCollection =
       FirebaseFirestore.instance.collection('User');
   final FirebaseFirestore _db = FirebaseFirestore.instance;
+
+  final FirebaseDatabase _urldatabase = FirebaseDatabase.instance;
 
   Stream<List<Specialist>> streamSpecialist() {
     return _db.collection('Specialist').snapshots().map((list) => list.docs
@@ -66,4 +71,23 @@ class DatabaseController {
   Future<void> deleteDoctor(String id) async {
     await _db.collection('Doctor').doc(id).delete();
   }
+
+  Future<void> addTask(Queues task) async {
+    try {
+      _urldatabase.databaseURL =
+          "https://aqhealth-d8be5-default-rtdb.asia-southeast1.firebasedatabase.app";
+      DatabaseReference ref = _urldatabase.ref('Task/${task.appointmentId}');
+      await ref.set({
+        "id": task.id.toString(),
+        "appointmentid": task.appointmentId,
+        "priority": task.priority,
+        "timestamp": task.timeStamp,
+        "delay": task.delay,
+      });
+    } catch (e) {
+      log(e.toString());
+    }
+  }
+
+ 
 }

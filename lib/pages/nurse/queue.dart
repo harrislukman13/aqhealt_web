@@ -1,7 +1,9 @@
 import 'package:aqhealth_web/controllers/database_controller.dart';
 import 'package:aqhealth_web/models/appointment.dart';
+import 'package:aqhealth_web/models/nurse.dart';
 import 'package:aqhealth_web/pages/nurse/newappointment.dart';
 import 'package:aqhealth_web/pages/nurse/oldappointment.dart';
+import 'package:aqhealth_web/pages/nurse/queueprogress.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
@@ -9,8 +11,8 @@ import 'package:aqhealth_web/constants/color.dart';
 import 'package:qr_bar_code_scanner_dialog/qr_bar_code_scanner_dialog.dart';
 
 class ManageQueue extends StatefulWidget {
-  const ManageQueue({super.key});
-
+  const ManageQueue({super.key, required this.uid});
+  final UserModel uid;
   @override
   State<ManageQueue> createState() => _ManageQueueState();
 }
@@ -18,6 +20,7 @@ class ManageQueue extends StatefulWidget {
 enum Menu {
   newappointment,
   oldappointment,
+  queue,
 }
 
 class _ManageQueueState extends State<ManageQueue> {
@@ -25,7 +28,9 @@ class _ManageQueueState extends State<ManageQueue> {
 
   final PageController _pageController = PageController();
 
-  bool _ispress = false;
+  bool _aispress = false;
+  bool _hispress = false;
+  bool _qispress = false;
 
   changePage(Menu page, Map<String, dynamic> data) {
     setState(() {
@@ -35,6 +40,9 @@ class _ManageQueueState extends State<ManageQueue> {
       } else if (page == Menu.oldappointment) {
         selectedpage = page;
         _pageController.jumpToPage(1);
+      } else if (page == Menu.queue) {
+        selectedpage = page;
+        _pageController.jumpToPage(2);
       }
     });
   }
@@ -113,9 +121,9 @@ class _ManageQueueState extends State<ManageQueue> {
                                       color: Colors.transparent,
                                       child: Container(
                                           decoration: BoxDecoration(
-                                            color: _ispress
-                                                ? Colors.white
-                                                : primary,
+                                            color: _aispress
+                                                ? primary
+                                                : Colors.white,
                                             borderRadius:
                                                 BorderRadius.horizontal(
                                                     left: Radius.circular(20)),
@@ -125,9 +133,9 @@ class _ManageQueueState extends State<ManageQueue> {
                                             "Appointment",
                                             style: TextStyle(
                                                 fontSize: 16,
-                                                color: _ispress
-                                                    ? Colors.grey
-                                                    : Colors.white,
+                                                color: _aispress
+                                                    ? Colors.white
+                                                    : Colors.grey,
                                                 fontWeight: FontWeight.bold),
                                           ))),
                                     ),
@@ -135,7 +143,9 @@ class _ManageQueueState extends State<ManageQueue> {
                                       setState(() {
                                         selectedpage = Menu.newappointment;
                                         _pageController.jumpToPage(0);
-                                        _ispress = !_ispress;
+                                        _aispress = !_aispress;
+                                        _hispress = false;
+                                        _qispress = false;
                                       });
                                     },
                                   ),
@@ -146,18 +156,15 @@ class _ManageQueueState extends State<ManageQueue> {
                                       color: Colors.transparent,
                                       child: Container(
                                           decoration: BoxDecoration(
-                                              color: _ispress
-                                                  ? primary
-                                                  : Colors.white,
-                                              borderRadius:
-                                                  BorderRadius.horizontal(
-                                                      right:
-                                                          Radius.circular(20))),
+                                            color: _hispress
+                                                ? primary
+                                                : Colors.white,
+                                          ),
                                           child: Center(
                                             child: Text(
                                               "History",
                                               style: TextStyle(
-                                                  color: _ispress
+                                                  color: _hispress
                                                       ? Colors.white
                                                       : Colors.grey,
                                                   fontWeight: FontWeight.bold),
@@ -168,7 +175,44 @@ class _ManageQueueState extends State<ManageQueue> {
                                       setState(() {
                                         selectedpage = Menu.oldappointment;
                                         _pageController.jumpToPage(1);
-                                        _ispress = !_ispress;
+                                        _hispress = !_hispress;
+                                        _aispress = false;
+                                        _qispress = false;
+                                      });
+                                    },
+                                  ),
+                                  GestureDetector(
+                                    child: Container(
+                                      height: 50.0,
+                                      width: 20.w,
+                                      color: Colors.transparent,
+                                      child: Container(
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.horizontal(
+                                                    right: Radius.circular(20)),
+                                            color: _qispress
+                                                ? primary
+                                                : Colors.white,
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              "Queue",
+                                              style: TextStyle(
+                                                  color: _qispress
+                                                      ? Colors.white
+                                                      : Colors.grey,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          )),
+                                    ),
+                                    onTap: () {
+                                      setState(() {
+                                        selectedpage = Menu.queue;
+                                        _pageController.jumpToPage(2);
+                                        _qispress = !_qispress;
+                                        _aispress = false;
+                                        _hispress = false;
                                       });
                                     },
                                   ),
@@ -181,8 +225,12 @@ class _ManageQueueState extends State<ManageQueue> {
                           controller: _pageController,
                           physics: const NeverScrollableScrollPhysics(),
                           children: [
-                            NewAppointment(appointment: appointment,),
+                            NewAppointment(
+                              appointment: appointment,
+                              uid: widget.uid,
+                            ),
                             OldAppointment(),
+                            QueueManage(),
                           ],
                         ),
                       ),
@@ -194,6 +242,4 @@ class _ManageQueueState extends State<ManageQueue> {
           );
         });
   }
-
- 
 }

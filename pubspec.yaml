@@ -48,6 +48,8 @@ dependencies:
   intl: ^0.17.0
   ionicons: ^0.2.1
   qr_bar_code_scanner_dialog: ^0.0.5
+  firebase_database: ^10.0.9
+  queue: ^3.1.0+2
 
 dev_dependencies:
   flutter_test:

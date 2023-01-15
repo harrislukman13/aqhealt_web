@@ -14,8 +14,8 @@ import 'package:sizer/sizer.dart';
 import '../../widgets/custom_text_field.dart';
 
 class ListDoctor extends StatefulWidget {
-  const ListDoctor({super.key});
-
+  const ListDoctor({super.key, required this.db});
+  final DatabaseController db;
   @override
   State<ListDoctor> createState() => _ListDoctorState();
 }
@@ -43,8 +43,6 @@ class _ListDoctorState extends State<ListDoctor> {
 
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<UserModel?>(context);
-    final db = DatabaseController(uid: user!.uid);
     return StreamProvider<List<Specialist>>.value(
         value: DatabaseController.withoutUID().streamSpecialist(),
         initialData: [],
@@ -237,20 +235,24 @@ class _ListDoctorState extends State<ListDoctor> {
                                                 final String id = DateTime.now()
                                                     .microsecondsSinceEpoch
                                                     .toString();
-                                                await db.createDoctor(Doctor(
-                                                    id: id,
-                                                    doctorName:
-                                                        nameController.text,
-                                                    description:
-                                                        descController.text,
-                                                    specialistname:
-                                                        _specialist!,
-                                                    specialistId:
-                                                        _specialistid!,
-                                                    startTime: int.parse(
-                                                        startController.text),
-                                                    endTime: int.parse(
-                                                        endController.text)));
+                                                await widget.db.createDoctor(
+                                                    Doctor(
+                                                        id: id,
+                                                        doctorName: nameController
+                                                            .text,
+                                                        description:
+                                                            descController.text,
+                                                        specialistname:
+                                                            _specialist!,
+                                                        specialistId:
+                                                            _specialistid!,
+                                                        startTime: int.parse(
+                                                            startController
+                                                                .text),
+                                                        endTime:
+                                                            int.parse(
+                                                                endController
+                                                                    .text)));
                                                 setState(() {
                                                   isLoading = true;
                                                 });
@@ -299,7 +301,8 @@ class _ListDoctorState extends State<ListDoctor> {
                                 padding: EdgeInsets.all(5.h),
                                 child: SizedBox(
                                     width: double.infinity,
-                                    child: _createDataTable(doctor, db))),
+                                    child:
+                                        _createDataTable(doctor, widget.db))),
                           ],
                         ),
                       ),
