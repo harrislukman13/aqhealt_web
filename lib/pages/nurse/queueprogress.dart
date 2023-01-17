@@ -32,6 +32,13 @@ class _QueueManageState extends State<QueueManage> {
     return ref.onValue;
   }
 
+  Future<void> deleteQueue(String? appointmentid) async {
+    _urldatabase.databaseURL =
+        "https://aqhealth-d8be5-default-rtdb.asia-southeast1.firebasedatabase.app";
+    DatabaseReference ref = _urldatabase.ref('Task/${appointmentid}');
+    await ref.remove();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -62,7 +69,8 @@ class _QueueManageState extends State<QueueManage> {
                     return 0;
                   },
                 );
-                
+              } else if (event == null) {
+                return Container();
               }
               return _createDataTable(queues);
             },
@@ -85,6 +93,8 @@ class _QueueManageState extends State<QueueManage> {
       DataColumn(label: Text('Priority')),
       DataColumn(label: Text('timestamp')),
       DataColumn(label: Text('Delay')),
+      DataColumn(label: Text('Room')),
+      DataColumn(label: Text('Edit')),
     ];
   }
 
@@ -94,6 +104,18 @@ class _QueueManageState extends State<QueueManage> {
           DataCell(Text(sort.priority!.toString())),
           DataCell(Text(sort.timeStamp!.toString())),
           DataCell(Text(sort.delay!.toString())),
+          DataCell(Text(sort.room.toString())),
+          DataCell(Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              IconButton(onPressed: () {}, icon: Icon(Icons.edit)),
+              IconButton(
+                  onPressed: () async {
+                    await deleteQueue(sort.appointmentId);
+                  },
+                  icon: Icon(Icons.delete_forever))
+            ],
+          ))
         ]));
   }
 }

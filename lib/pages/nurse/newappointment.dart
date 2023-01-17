@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:queue/queue.dart';
 import 'package:collection/collection.dart';
 import 'package:sizer/sizer.dart';
+import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class NewAppointment extends StatefulWidget {
   const NewAppointment(
@@ -28,23 +29,45 @@ class _NewAppointmentState extends State<NewAppointment> {
   final priorityQueue =
       PriorityQueue<Queues>((a, b) => a.priority! - b.priority!);
   final GlobalKey<FormState> _formKey = GlobalKey();
+  List<Appointments> latestAppointment = [];
 
   @override
   void initState() {
     super.initState();
+    // setState(() {
+    //   // getLatestAppointment();
+    //   // log(latestAppointment.length.toString());
+    // });
   }
+
+  // getLatestAppointment() {
+  //   for (int i = 0; i < widget.appointment.length; i++) {
+  //     if (widget.appointment[i].status == "sucess") {
+  //       latestAppointment.add(widget.appointment[i]);
+  //     }
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
     final DatabaseController db =
         DatabaseController(uid: widget.uid.toString());
-    return Container(
-      child: _createDataTable(widget.appointment, db),
-    );
+    return FutureBuilder(
+        future: DatabaseController.withoutUID().getLatestApointment(),
+        builder: (context, AsyncSnapshot<List<Appointments>> snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            List<Appointments>? appointments = snapshot.data;
+            return Container(
+              child: _createDataTable(appointments, db),
+            );
+          } else {
+            return Container();
+          }
+        });
   }
 
   DataTable _createDataTable(
-      List<Appointments> appointments, DatabaseController db) {
+      List<Appointments>? appointments, DatabaseController db) {
     return DataTable(
         columns: _createColumns(), rows: _createRows(appointments, db));
   }
@@ -62,8 +85,8 @@ class _NewAppointmentState extends State<NewAppointment> {
   }
 
   List<DataRow> _createRows(
-      List<Appointments> appointments, DatabaseController db) {
-    return appointments
+      List<Appointments>? appointments, DatabaseController db) {
+    return appointments!
         .map((appointment) => DataRow(cells: [
               DataCell(Text(appointment.patientName!)),
               DataCell(Text(appointment.specialistName!)),
@@ -76,8 +99,11 @@ class _NewAppointmentState extends State<NewAppointment> {
                   final FocusNode priorityFocus = FocusNode();
                   final FocusNode delayFocus = FocusNode();
                   final FocusNode idFocus = FocusNode();
+                  final FocusNode appidFocus = FocusNode();
                   final TextEditingController idController =
                       TextEditingController(text: appointment.patientID);
+                  final TextEditingController appidController =
+                      TextEditingController(text: appointment.appointmentId);
                   final TextEditingController roomController =
                       TextEditingController();
 
@@ -103,6 +129,15 @@ class _NewAppointmentState extends State<NewAppointment> {
                               hintText: 'PatientID',
                               focusNode: idFocus,
                               controller: idController,
+                              validator: (value) => value!.length <= 10
+                                  ? 'less than 30 character'
+                                  : null,
+                            ),
+                            SizedBox(height: 3.h),
+                            CustomTextFormField(
+                              hintText: 'Appointment',
+                              focusNode: appidFocus,
+                              controller: appidController,
                               validator: (value) => value!.length <= 10
                                   ? 'less than 30 character'
                                   : null,
@@ -149,16 +184,15 @@ class _NewAppointmentState extends State<NewAppointment> {
                               onPressed: () async {
                                 if (_formKey.currentState!.validate()) {
                                   await db.addTask(Queues(
-                                      appointmentId: idController.text,
+                                      appointmentId: appidController.text,
                                       timeStamp: DateTime.now()
                                           .microsecondsSinceEpoch
                                           .toInt(),
                                       priority:
                                           int.parse(priorityController.text),
                                       delay: int.parse(delayController.text),
-                                      id: DateTime.now()
-                                          .microsecondsSinceEpoch
-                                          .toString()));
+                                      patientid: idController.text,
+                                      room: int.parse(roomController.text)));
                                 }
 
                                 Navigator.pop(context);

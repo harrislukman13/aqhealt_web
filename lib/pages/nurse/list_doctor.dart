@@ -55,7 +55,7 @@ class _ListDoctorState extends State<ListDoctor> {
               catchError: (context, error) => [],
               builder: (context, snapshot) {
                 List<Doctor> doctor = Provider.of<List<Doctor>>(context);
-                log(doctor.length.toString());
+                //log(doctor.length.toString());
                 return ListView(
                   children: [
                     SizedBox(

@@ -31,6 +31,26 @@ class DatabaseController {
         .toList());
   }
 
+  Future<List<Appointments>> getLatestApointment() async {
+    QuerySnapshot<Map<String, dynamic>> data = await _db
+        .collection('Appointment')
+        .where('status', isEqualTo: 'success')
+        .get();
+    List<Appointments> appointments =
+        data.docs.map((doc) => Appointments.fromFirestore(doc)).toList();
+    return appointments;
+  }
+
+  Future<List<Appointments>> getHistoryApointment() async {
+    QuerySnapshot<Map<String, dynamic>> data = await _db
+        .collection('Appointment')
+        .where('status', isEqualTo: 'completed')
+        .get();
+    List<Appointments> appointments =
+        data.docs.map((doc) => Appointments.fromFirestore(doc)).toList();
+    return appointments;
+  }
+
   Stream<List<Doctor>> streamDoctor() {
     return _db.collection('Doctor').snapshots().map((list) =>
         list.docs.map((doctor) => Doctor.fromFireStore(doctor)).toList());
@@ -78,16 +98,15 @@ class DatabaseController {
           "https://aqhealth-d8be5-default-rtdb.asia-southeast1.firebasedatabase.app";
       DatabaseReference ref = _urldatabase.ref('Task/${task.appointmentId}');
       await ref.set({
-        "id": task.id.toString(),
+        "id": task.patientid.toString(),
         "appointmentid": task.appointmentId,
         "priority": task.priority,
         "timestamp": task.timeStamp,
         "delay": task.delay,
+        "room": task.room,
       });
     } catch (e) {
       log(e.toString());
     }
   }
-
- 
 }

@@ -29,7 +29,7 @@ class _DashboardState extends State<Dashboard> {
         builder: (context, child) {
           List<Appointments> appointment =
               Provider.of<List<Appointments>>(context);
-          log(appointment.length.toString());
+          
 
           if (appointment != null) {
             for (var e in appointment) {
