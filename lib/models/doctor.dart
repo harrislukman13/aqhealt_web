@@ -1,22 +1,25 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Doctor {
-  String id;
-  String doctorName;
-  String description;
-  String specialistname;
-  String specialistId;
-  int startTime;
-  int endTime;
+  String? id;
+  String? doctorName;
+  String? description;
+  String? specialistname;
+  String? specialistId;
+  int? startTime;
+  int? endTime;
+  String? url;
 
   Doctor(
-      {required this.id,
-      required this.doctorName,
-      required this.description,
-      required this.specialistname,
-      required this.specialistId,
-      required this.startTime,
-      required this.endTime});
+      { this.id,
+       this.doctorName,
+       this.description,
+       this.specialistname,
+       this.specialistId,
+       this.startTime,
+       this.endTime,
+       this.url
+      });
 
   factory Doctor.fromFireStore(DocumentSnapshot doc) {
     return Doctor(
@@ -26,7 +29,8 @@ class Doctor {
         specialistId: doc['specialistid'],
         description: doc['description'],
         startTime: doc['starttime'],
-        endTime: doc['endtime']);
+        endTime: doc['endtime'],
+        url: doc['url']);
   }
 
   static fromFirestore(QueryDocumentSnapshot<Map<String, dynamic>> doctor) {}

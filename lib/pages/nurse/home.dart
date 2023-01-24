@@ -3,6 +3,7 @@ import 'dart:collection';
 import 'package:aqhealth_web/controllers/auth_controller.dart';
 import 'package:aqhealth_web/controllers/database_controller.dart';
 import 'package:aqhealth_web/models/nurse.dart';
+import 'package:aqhealth_web/pages/nurse/chart.dart';
 import 'package:aqhealth_web/pages/nurse/dashboard.dart';
 import 'package:aqhealth_web/pages/nurse/list_doctor.dart';
 import 'package:aqhealth_web/widgets/responsive.dart';
@@ -26,6 +27,7 @@ enum Menu {
   dashboard,
   listdoctor,
   queue,
+  chart,
 }
 
 class _HomeState extends State<Home> {
@@ -41,13 +43,16 @@ class _HomeState extends State<Home> {
       } else if (page == Menu.listdoctor) {
         selectedpage = page;
         _pageController.jumpToPage(1);
-      } else {
+      } else if (page == Menu.queue) {
         selectedpage = page;
         _pageController.jumpToPage(2);
+      } else {
+        selectedpage = page;
+        _pageController.jumpToPage(3);
       }
     });
   }
-  
+
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<UserModel?>(context);
@@ -66,8 +71,13 @@ class _HomeState extends State<Home> {
                 physics: const NeverScrollableScrollPhysics(),
                 children: [
                   Dashboard(),
-                  ListDoctor(db: db,),
-                  ManageQueue(uid: user,),
+                  ListDoctor(
+                    db: db,
+                  ),
+                  ManageQueue(
+                    uid: user,
+                  ),
+                  Charts(),
                 ],
               ))
         ],
@@ -123,6 +133,19 @@ class _HomeState extends State<Home> {
           ),
           ListTile(
             title: Text(
+              'Chart',
+              style: TextStyle(color: Colors.blue),
+            ),
+            leading: Icon(CupertinoIcons.chart_bar),
+            onTap: () {
+              setState(() {
+                selectedpage = Menu.queue;
+                _pageController.jumpToPage(3);
+              });
+            },
+          ),
+          ListTile(
+            title: Text(
               'Logout',
               style: TextStyle(color: Colors.blue),
             ),
@@ -142,22 +165,38 @@ AppBar NavBar(BuildContext context, Map<dynamic, dynamic> data) {
     elevation: 3,
     backgroundColor: Colors.white,
     actions: [
-      Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text(
-            'Welcome',
-            style: TextStyle(color: Colors.blue, fontSize: 3.sp),
-          ),
-          Text(
-            data['name'],
-            style: TextStyle(
-                color: Colors.black,
-                fontSize: 3.sp,
-                fontWeight: FontWeight.bold),
-          ),
-        ],
+      Padding(
+        padding: EdgeInsets.fromLTRB(0, 0, 4.h, 0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              'Nurse',
+              style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 2.sp,
+                  fontWeight: FontWeight.bold),
+            ),
+            SizedBox(
+              width: 1.w,
+            ),
+            Text(
+              'Welcome',
+              style: TextStyle(color: Colors.blue, fontSize: 2.sp),
+            ),
+            SizedBox(
+              width: 5,
+            ),
+            Text(
+              data['name'],
+              style: TextStyle(
+                  color: Colors.indigo,
+                  fontSize: 3.sp,
+                  fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
       )
     ],
   );

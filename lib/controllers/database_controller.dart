@@ -7,6 +7,7 @@ import 'package:aqhealth_web/models/queue.dart';
 import 'package:aqhealth_web/models/specialist.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class DatabaseController {
   final String uid;
@@ -60,8 +61,7 @@ class DatabaseController {
     Doctor a,
   ) async {
     try {
-      final String id = DateTime.now().microsecondsSinceEpoch.toString();
-      await _db.collection('Doctor').doc(id).set({
+      await _db.collection('Doctor').doc(a.id).set({
         'id': a.id,
         'doctorname': a.doctorName,
         'description': a.description,
@@ -69,6 +69,7 @@ class DatabaseController {
         'specialistid': a.specialistId,
         'starttime': a.startTime,
         'endtime': a.endTime,
+        'url': a.url
       });
       return true;
     } catch (e) {
@@ -85,7 +86,26 @@ class DatabaseController {
       'specialistid': a.specialistId,
       'starttime': a.startTime,
       'endtime': a.endTime,
+      'url': a.url
     });
+  }
+
+  Future<void> updateAppointment(Appointments a) async {
+    await _db.collection('Appointment').doc(a.appointmentId).update({
+      'appointmentid': a.appointmentId,
+      'bookdate': a.bookdate,
+      'doctorname': a.doctorname,
+      'time': a.time,
+      'patientid': a.patientID,
+      'patientname': a.patientName,
+      'specialistname': a.specialistName,
+      'doctorid': a.doctorId,
+      'status': a.status,
+    });
+  }
+
+  Future<void> deleteAppointment(String id) async {
+    await _db.collection('Appointment').doc(id).delete();
   }
 
   Future<void> deleteDoctor(String id) async {
@@ -105,6 +125,15 @@ class DatabaseController {
         "delay": task.delay,
         "room": task.room,
       });
+    } catch (e) {
+      log(e.toString());
+    }
+  }
+
+  Future<void> changeStatus(String id, String status) async {
+    dynamic data;
+    try {
+      data = _db.collection("Appointment").doc(id).update({'status': status});
     } catch (e) {
       log(e.toString());
     }
