@@ -5,6 +5,7 @@ import 'package:aqhealth_web/constants/color.dart';
 import 'package:aqhealth_web/controllers/database_controller.dart';
 import 'package:aqhealth_web/models/appointment.dart';
 import 'package:aqhealth_web/models/doctor.dart';
+import 'package:aqhealth_web/models/notification.dart';
 import 'package:aqhealth_web/models/nurse.dart';
 import 'package:aqhealth_web/models/queue.dart';
 import 'package:aqhealth_web/models/specialist.dart';
@@ -13,6 +14,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:queue/queue.dart';
@@ -107,6 +109,7 @@ class _NewAppointmentState extends State<NewAppointment> {
       DataColumn(label: Text('Book Date')),
       DataColumn(label: Text('Book Time')),
       DataColumn(label: Text('Queue')),
+      DataColumn(label: Text('Notify')),
       DataColumn(label: Text('Setting')),
     ];
   }
@@ -241,6 +244,74 @@ class _NewAppointmentState extends State<NewAppointment> {
                 },
                 icon: Icon(Icons.queue),
               )),
+              DataCell(IconButton(
+                  onPressed: () {
+                    showDialog(
+                        context: context,
+                        builder: ((context) {
+                          final FocusNode notyFocus = FocusNode();
+                          final TextEditingController notyController =
+                              TextEditingController(
+                                  text:
+                                      "Please check your updated Queue date and Time");
+                          return StatefulBuilder(builder: ((context, setState) {
+                            return AlertDialog(
+                              title: const Text(
+                                "Notify Patient",
+                                style: TextStyle(
+                                    color: Colors.blue,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              actions: [
+                                Form(
+                                  key: _formKey,
+                                  child: SizedBox(
+                                    height: 20,
+                                  ),
+                                ),
+                                CustomTextFormField(
+                                  hintText: 'Notifications',
+                                  focusNode: notyFocus,
+                                  controller: notyController,
+                                  validator: (value) => value!.length <= 10
+                                      ? 'less than 30 character'
+                                      : null,
+                                ),
+                                SizedBox(
+                                  height: 3.h,
+                                ),
+                                TextButton(
+                                  style: TextButton.styleFrom(
+                                    backgroundColor: Colors.indigo,
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 15,
+                                      horizontal: 20,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                  ),
+                                  onPressed: () async {
+                                    if (_formKey.currentState!.validate()) {
+                                      await db.createNotification(Notifications(
+                                          patientid: appointment.patientID,
+                                          notifyText: notyController.text,
+                                          dateTime: DateTime.now()));
+                                    }
+
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text(
+                                    'Send Notification',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ),
+                              ],
+                            );
+                          }));
+                        }));
+                  },
+                  icon: Icon(CupertinoIcons.bell_fill))),
               DataCell(Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [

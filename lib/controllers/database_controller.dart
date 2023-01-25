@@ -3,6 +3,7 @@ import 'dart:js_util';
 
 import 'package:aqhealth_web/models/appointment.dart';
 import 'package:aqhealth_web/models/doctor.dart';
+import 'package:aqhealth_web/models/notification.dart';
 import 'package:aqhealth_web/models/queue.dart';
 import 'package:aqhealth_web/models/specialist.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -134,6 +135,18 @@ class DatabaseController {
     dynamic data;
     try {
       data = _db.collection("Appointment").doc(id).update({'status': status});
+    } catch (e) {
+      log(e.toString());
+    }
+  }
+
+  Future<void> createNotification(Notifications a) async {
+    try {
+      await _db.collection("Notification").doc().set({
+        'id': a.patientid,
+        'notification': a.notifyText,
+        'datetime':a.dateTime
+      });
     } catch (e) {
       log(e.toString());
     }
