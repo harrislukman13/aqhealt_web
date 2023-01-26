@@ -41,14 +41,21 @@ class _QueueManageState extends State<QueueManage> {
     await ref.remove();
   }
 
-  Future<void> updateQueue(String? appointmentid, String? patientid,
-      int? priority, int? timestamp, int? delay, int? room) async {
+  Future<void> updateQueue(
+      String? appointmentid,
+      String? patientname,
+      String? patientid,
+      int? priority,
+      int? timestamp,
+      int? delay,
+      int? room) async {
     _urldatabase.databaseURL =
         "https://aqhealth-d8be5-default-rtdb.asia-southeast1.firebasedatabase.app";
     DatabaseReference ref = _urldatabase.ref('Task/${appointmentid}');
 
     Map<String, dynamic> data = <String, dynamic>{
       'id': patientid,
+      'patient': patientname,
       'appointmentid': appointmentid,
       'priority': priority,
       'timestamp': timestamp,
@@ -113,7 +120,7 @@ class _QueueManageState extends State<QueueManage> {
 
   List<DataColumn> _createColumns() {
     return [
-      DataColumn(label: Text('Appointment ID')),
+      DataColumn(label: Text('Patient Name')),
       DataColumn(label: Text('Priority')),
       DataColumn(label: Text('timestamp')),
       DataColumn(label: Text('Delay')),
@@ -124,7 +131,7 @@ class _QueueManageState extends State<QueueManage> {
 
   Iterable<DataRow> _createRows(List<Queues> sorts) {
     return sorts.map((sort) => DataRow(cells: [
-          DataCell(Text(sort.appointmentId!)),
+          DataCell(Text(sort.patientname!)),
           DataCell(Text(sort.priority!.toString())),
           DataCell(Text(sort.timeStamp!.toString())),
           DataCell(Text(sort.delay!.toString())),
@@ -218,6 +225,7 @@ class _QueueManageState extends State<QueueManage> {
                                     if (_formKey.currentState!.validate()) {
                                       await updateQueue(
                                           sort.appointmentId,
+                                          sort.patientname,
                                           sort.patientid,
                                           int.parse(priorityController.text
                                               .toString()),

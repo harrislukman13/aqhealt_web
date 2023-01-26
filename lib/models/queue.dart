@@ -1,5 +1,8 @@
+import 'package:flutter/cupertino.dart';
+
 class Queues {
   String? patientid;
+  String? patientname;
   int? priority;
   String? appointmentId;
   int? timeStamp;
@@ -8,6 +11,7 @@ class Queues {
 
   Queues(
       {this.patientid,
+      this.patientname,
       this.appointmentId,
       this.timeStamp,
       this.priority,
@@ -16,6 +20,7 @@ class Queues {
 
   factory Queues.fromJson(Map<String, dynamic> map) => Queues(
       patientid: map['id'] ?? '',
+      patientname: map['name'] ?? '',
       appointmentId: map['appointmentid'] ?? '',
       priority: map['priority'] ?? 0,
       timeStamp: map['timestamp'] ?? 0,
@@ -25,6 +30,7 @@ class Queues {
   Map<String, dynamic> toJson() {
     return {
       'id': patientid,
+      'name': patientname,
       'appointmentid': appointmentId,
       'priority': priority,
       'timestamp': timeStamp,

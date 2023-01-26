@@ -218,6 +218,7 @@ class _NewAppointmentState extends State<NewAppointment> {
                                 if (_formKey.currentState!.validate()) {
                                   await db.addTask(Queues(
                                       appointmentId: appidController.text,
+                                      patientname: appointment.patientName,
                                       timeStamp: DateTime.now()
                                           .microsecondsSinceEpoch
                                           .toInt(),

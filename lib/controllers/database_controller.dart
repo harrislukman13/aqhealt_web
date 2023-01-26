@@ -120,6 +120,7 @@ class DatabaseController {
       DatabaseReference ref = _urldatabase.ref('Task/${task.appointmentId}');
       await ref.set({
         "id": task.patientid.toString(),
+        'name': task.patientname,
         "appointmentid": task.appointmentId,
         "priority": task.priority,
         "timestamp": task.timeStamp,
@@ -145,7 +146,7 @@ class DatabaseController {
       await _db.collection("Notification").doc().set({
         'id': a.patientid,
         'notification': a.notifyText,
-        'datetime':a.dateTime
+        'datetime': a.dateTime
       });
     } catch (e) {
       log(e.toString());
